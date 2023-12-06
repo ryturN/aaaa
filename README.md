@@ -5,3 +5,4 @@ DaurinPoin application is a waste recycling application that provides incentives
 
 
 ## Architekture Overview
+![DaurinPoin-Page-1 drawio](https://github.com/Capstone-DaurinPoin/Cloud-Computing/assets/100658838/a7567219-a5ba-42ba-8e26-fe42f343e81a)
