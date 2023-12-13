@@ -1,4 +1,4 @@
-const { transactionRef } = require("../../db/firebase");
+// const { transactionRef } = require("../../db/firebase");
 
 const getTransactions = async (req, res) => {
   try {

@@ -1,4 +1,4 @@
-const { rewardRef } = require("../../db/firebase");
+// const { rewardRef } = require("../../db/firebase");
 
 const getReward = async (req, res) => {
   try {

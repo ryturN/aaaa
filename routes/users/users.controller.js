@@ -1,90 +1,63 @@
-const { userRef } = require("../../db/firebase");
+const User = require('../../models/users');
+const auth = require('../../controller/authFunction');
+exports.login = async (req, res) => {
+    try {
+        const {username, password} = req.body;
+        const user = await auth.login(username,password);
+        if(!user){
+            return res.status(400).json({status:'fail',message:'username or password is wrong'});
+        }
+        return res.status(200).json({status:'success',message:'login success',data:user});    
+    } catch (error) {
+        throw error
+    }
+}
 
-const getUsers = async (req, res) => {
-  try {
-    const snapshot = await userRef.get();
-    const users = [];
-    snapshot.forEach((doc) => {
-      users.push({ id: doc.id, ...doc.data() });
-    });
-    return res.status(200).json({
-      status: {
-        code: 200,
-        message: "Success get all users",
-      },
-      data: users,
-    });
-  } catch (error) {
-    console.log(error);
+exports.register = async (req, res) => {
+    try {
+        const {username,email,password,confirmPassword} = req.body;
+        if(password !== confirmPassword){
+            return res.status(400).json({status:'fail',message:'password and confirm password is not match'});
+        }
+        const userId = Math.floor(Math.random() * 1000000000);
+        await auth.register(userId,username,email,password);
+        return res.status(200).json({status:'success',message:'register success'});
+    } catch (error) {
+        throw error
+    }
+}
+
+exports.getAllUser = async (req, res) => {
+    try {
+        const user = await User.findAll();
+        return res.status(200).json({status:'success',message:'get all user success',data:user});
+    } catch (error) {
+        throw error
+    }
+}
+
+exports.getUserById = async (req, res) => {
+  try{
+    const userId = req.params.userId;
+    const user = await User.findOne({where:{user_id:userId}});
+    return res.status(200).json({status:'success',message:'get user by id success',data:user});
+  }catch(error){
+    throw error
   }
-};
+}
 
-const addUser = async (req, res) => {
-  const { name, email, password, point,imageUser } = req.body;
-  const userData = {
-    name,
-    email, 
-    password, 
-    point,
-    imageUser
-  };
-
-  try {
-    const docRef = await userRef.add(userData);
-
-    return res.status(201).json({
-      status: {
-        code: 201,
-        message: "Success add user",
-      },
-      data: {
-        id: docRef.id,
-      },
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const updateUser = async (req, res) => {
+exports.updateUser = async (req, res) => {
   try {
     const userId = req.params.userId;
-    const user = userRef.doc(userId);
-    console.log(user);
-    const { name, email, password, point, imageUser } = req.body;
-    const userData = {
-      name,
-      email, 
-      password, 
-      point,
-      imageUser
-    };
-    const docRef = await user.update(updateduser);
-    return res.status(201).json({
-      status: {
-        code: 201,
-        message: "Success update user",
-      },
-      data: {
-        id: docRef.id,
-      },
-    });
+    const user = await User.findOne({where:{user_id:userId}});
+    const {username,email} = req.body;
+    const updatedUser = {
+      username,
+      email
+    }
+    await user.update(updatedUser);
+    return res.status(201).json({status:'success',message:'update user success'});
   } catch (error) {
-    console.log(error);
+      throw error
   }
-};
-
-const deleteUser = async (req, res) => {
-  const userId = req.params.userId;
-  const user = userRef.doc(userId);
-  await user.delete();
-  return res.status(201).json({
-    status: {
-      code: 201,
-      message: "Success delete user",
-    },
-    data: null,
-  });
-};
-
-module.exports = { getUsers, addUser, updateUser, deleteUser };
+}

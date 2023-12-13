@@ -1,4 +1,4 @@
-const { trashRef } = require("../../db/firebase");
+// const { trashRef } = require("../../db/firebase");
 
 const getTrash = async (req, res) => {
   try {

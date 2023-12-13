@@ -1,8 +1,11 @@
 const http = require("http");
 const app = require("./app");
 const PORT = process.env.PORT || 8000;
+const db = require("./db/db");
 
 const server = http.createServer(app);
+
+
 
 const start = () => {
   try {
